@@ -1,10 +1,11 @@
-
 from bauhaus import Encoding, proposition, constraint
 from bauhaus.utils import count_solutions, likelihood
 
 # These two lines make sure a faster SAT solver is used.
 from nnf import config
 config.sat_backend = "kissat"
+
+from constructors import *
 
 # Encoding that will store all of your constraints
 E = Encoding()
@@ -65,6 +66,19 @@ def example_theory():
 
     return E
 
+# def tetromino_theory():
+
+time_20 = Time(20)
+row_cleared = Row_Cleared()
+
+# Time Theories:
+#   If time goes above 20, then the board is unclearable
+#   If a successfull shift, or rotation is achieved, time is increased by 1
+#   If a shift, nor a rotation is made, the tetromino will drop by 1, and time will increase by 1
+def time_theory():
+    E.add_constraint(time_20 >> ~row_cleared)
+
+    E.add_constraint()
 
 if __name__ == "__main__":
 

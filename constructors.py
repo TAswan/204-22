@@ -1,4 +1,4 @@
-from bauhaus import Encoding, proposition
+from bauhaus import Encoding, proposition, constraint
 
 from random import randint
 
@@ -13,6 +13,23 @@ class Hashable:
 
     def __repr__(self):
         return str(self)
+
+class Node():
+    #  A node class for A* Pathfinding
+
+    def __init__(self, parent=None, position=None):
+        self.parent = parent
+        self.position = position
+
+        self.g = 0
+        self.h = 0
+        self.f = 0
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+    def __hash__(self):               #<-- added a hash method
+        return hash(self.position)
 
 @proposition(E)
 class Cell(Hashable):
@@ -45,6 +62,25 @@ class Board:
             strOut += ' '.join(row) + "\n"
 
         return strOut
+    
+@proposition(E)
+class Row_Cleared(Hashable):
+    # Row row has been cleared
+    def __init__(self, row):
+        self.row = row
+
+    def __repr__(self):
+        return f"Row {self.row} has been cleared"
+
+@constraint.at_most_k(E, k=20)
+@proposition(E)
+class Time(Hashable):
+    # Time_m how many moves have been made by the tetromino (1-20)
+    def __init__(self, move):
+        self.move = move
+
+    def __repr__(self):
+        return f"Move {self.move}"
 
 if __name__ == '__main__':
     board = Board()
