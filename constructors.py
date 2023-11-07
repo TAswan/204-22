@@ -39,7 +39,7 @@ class Cell(Hashable):
         self.y = y
 
     def __repr__(self):
-        return f"Board cell [{self.x}, {self.y}] is occupied"
+        return f"Board cell ({self.x}, {self.y}) is occupied"
 
 class Board:
     # List of Cell propositions which denoted which cells of the board are occupied
@@ -62,6 +62,16 @@ class Board:
             strOut += ' '.join(row) + "\n"
 
         return strOut
+
+@proposition(E)
+class Anchor(Hashable):
+    # Anchor coordinate (x,y) is occupied on the board
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"Anchor is located at ({self.x}, {self.y})"
     
 @proposition(E)
 class Row_Cleared(Hashable):

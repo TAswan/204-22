@@ -71,11 +71,97 @@ def example_theory():
 time_20 = Time(20)
 row_cleared = Row_Cleared()
 
-# Time Theories:
-#   If time goes above 20, then the board is unclearable
-#   If a successfull shift, or rotation is achieved, time is increased by 1
-#   If a shift, nor a rotation is made, the tetromino will drop by 1, and time will increase by 1
-def time_theory():
+def build_theory():
+    # ----------TETROMINO CONSTRAINTS----------
+    # --------------------------------------------------
+    # Alpha: a tetromino cannot exceed the boundaries
+    # --------------------------------------------------
+
+    # line
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(0) & Rotation(0) for x in range(10)] +
+                                      [Anchor(x, y) & Tetromino(0) & Rotation(1) for x in range(1, 7)] +
+                                      [Anchor(x, y) & Tetromino(0) & Rotation(2) for x in range(10)] +
+                                      [Anchor(x, y) & Tetromino(0) & Rotation(3) for x in range(1, 7)])
+
+    # square
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(1) & Rotation(0) for x in range(9)] +
+                                      [Anchor(x, y) & Tetromino(1) & Rotation(1) for x in range(9)] +
+                                      [Anchor(x, y) & Tetromino(1) & Rotation(2) for x in range(9)] +
+                                      [Anchor(x, y) & Tetromino(1) & Rotation(3) for x in range(9)])
+    
+    # J
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
+    
+    # L
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
+    
+    # S
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(1, 10)])
+    
+    # T
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(5) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(5) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(5) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(5) & Rotation(3) for x in range(0, 9)])
+    
+    # Z
+    for y in range(20):
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(1, 10)])
+    
+    # --------------------------------------------------
+    # Beta: a tetromino cannot overlap with occupied cells
+    # --------------------------------------------------
+
+
+    # --------------------------------------------------
+    # Gamma: a tetromino can rotate
+    # --------------------------------------------------
+
+
+
+    # --------------------------------------------------
+    # Delta: a tetromino can shift
+    # --------------------------------------------------
+
+
+
+    # ----------TIME CONSTRAINTS----------
+    # --------------------------------------------------
+    # Time cannot go above 20 ticks
+    # --------------------------------------------------
+
+
+
+    # --------------------------------------------------
+    # A successful Gamma or Delta will increase time by 1
+    # --------------------------------------------------
+
+
+
+    # --------------------------------------------------
+    # If a tetromino doesn’t make a Gamma or Delta move then the tetromino will drop by 1 y coordinate, 
+    # and time will move 1 step as long as no piece is below it, otherwise it will stay in place and the 
+    # last row clearance check will occur.
+    # --------------------------------------------------
+
     E.add_constraint(time_20 >> ~row_cleared)
 
     E.add_constraint()
