@@ -71,84 +71,89 @@ def example_theory():
 time_20 = Time(20)
 row_cleared = Row_Cleared()
 
+line = Tetromino(0)
+square = Tetromino(1)
+j = Tetromino(2)
+l = Tetromino(3)
+s = Tetromino(4)
+t = Tetromino(5)
+z = Tetromino(6)
+
+up = Rotation(0)
+right = Rotation(1)
+down = Rotation(2)
+left = Rotation(3)
+
 def build_theory():
     # ----------TETROMINO CONSTRAINTS----------
-    # --------------------------------------------------
-    # Alpha: a tetromino cannot exceed the boundaries
-    # --------------------------------------------------
 
-    # line
+    # A tetromino can only be of one type
+    constraint.add_exactly_one(E, line, square, j, l, s, t, z)
+
+    # A tetromino can only be of one rotation
+    constraint.add_exactly_one(E, up, right, down, left)
+
+    # Alpha: a tetromino cannot exceed the boundaries
     for y in range(20):
+        # line
         constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(0) & Rotation(0) for x in range(10)] +
                                       [Anchor(x, y) & Tetromino(0) & Rotation(1) for x in range(1, 7)] +
                                       [Anchor(x, y) & Tetromino(0) & Rotation(2) for x in range(10)] +
                                       [Anchor(x, y) & Tetromino(0) & Rotation(3) for x in range(1, 7)])
 
-    # square
-    for y in range(20):
+        # square
         constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(1) & Rotation(0) for x in range(9)] +
                                       [Anchor(x, y) & Tetromino(1) & Rotation(1) for x in range(9)] +
                                       [Anchor(x, y) & Tetromino(1) & Rotation(2) for x in range(9)] +
                                       [Anchor(x, y) & Tetromino(1) & Rotation(3) for x in range(9)])
     
-    # J
-    for y in range(20):
+        # J
         constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
                                       [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
                                       [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
                                       [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
     
-    # L
-    for y in range(20):
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
+        # L
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(3) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(3) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(3) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(3) & Rotation(3) for x in range(0, 9)])
     
-    # S
-    for y in range(20):
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(1, 10)])
+        # S
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(4) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(4) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(4) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(4) & Rotation(3) for x in range(1, 10)])
     
-    # T
-    for y in range(20):
+        # T
         constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(5) & Rotation(0) for x in range(1, 9)] +
                                       [Anchor(x, y) & Tetromino(5) & Rotation(1) for x in range(1, 10)] +
                                       [Anchor(x, y) & Tetromino(5) & Rotation(2) for x in range(1, 9)] +
                                       [Anchor(x, y) & Tetromino(5) & Rotation(3) for x in range(0, 9)])
     
-    # Z
-    for y in range(20):
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(1, 10)])
+        # Z
+        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(6) & Rotation(0) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(6) & Rotation(1) for x in range(1, 10)] +
+                                      [Anchor(x, y) & Tetromino(6) & Rotation(2) for x in range(1, 9)] +
+                                      [Anchor(x, y) & Tetromino(6) & Rotation(3) for x in range(1, 10)])
     
-    # --------------------------------------------------
     # Beta: a tetromino cannot overlap with occupied cells
-    # --------------------------------------------------
 
 
-    # --------------------------------------------------
+
     # Gamma: a tetromino can rotate
-    # --------------------------------------------------
 
 
 
-    # --------------------------------------------------
     # Delta: a tetromino can shift
-    # --------------------------------------------------
-
+    
 
 
     # ----------TIME CONSTRAINTS----------
-    # --------------------------------------------------
+
     # Time cannot go above 20 ticks
-    # --------------------------------------------------
 
-
+    E.add_constraint(time_20 >> ~row_cleared)
 
     # --------------------------------------------------
     # A successful Gamma or Delta will increase time by 1
@@ -162,7 +167,6 @@ def build_theory():
     # last row clearance check will occur.
     # --------------------------------------------------
 
-    E.add_constraint(time_20 >> ~row_cleared)
 
     E.add_constraint()
 
