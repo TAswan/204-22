@@ -68,7 +68,6 @@ def example_theory():
 
 # def tetromino_theory():
 
-time_20 = Time(20)
 row_cleared = Row_Cleared()
 
 line = Tetromino(0)
@@ -85,13 +84,18 @@ down = Rotation(2)
 left = Rotation(3)
 
 def build_theory():
+    # ----------BOARD CONSTRAINTS----------
+
+    for y in range(20):
+        constraint.add_at_most_k((Cell(0, y) & Cell(1, y) & Cell(2, y) & Cell(3, y) & Cell(4, y) & Cell(5, y) & Cell(6, y) & Cell(7, y) & Cell(8, y) & Cell(9, y)) >> row_cleared, k = 20)
+
     # ----------TETROMINO CONSTRAINTS----------
 
     # A tetromino can only be of one type
-    constraint.add_exactly_one(E, line, square, j, l, s, t, z)
+    constraint.add_exactly_one(E, line, square, j, l, s, t, z) # Can be moved to decorator
 
     # A tetromino can only be of one rotation
-    constraint.add_exactly_one(E, up, right, down, left)
+    constraint.add_exactly_one(E, up, right, down, left) # Can be moved to decorator
 
     # Alpha: a tetromino cannot exceed the boundaries
     for y in range(20):
@@ -138,37 +142,22 @@ def build_theory():
                                       [Anchor(x, y) & Tetromino(6) & Rotation(3) for x in range(1, 10)])
     
     # Beta: a tetromino cannot overlap with occupied cells
-
-
+    for x in range(10):
+        for y in range(20):
+            for t in range(20):
+                E.add_constraint(~(Anchor(x, y, t) & Cell(x, y)))
 
     # Gamma: a tetromino can rotate
-
-
-
-    # Delta: a tetromino can shift
-    
-
-
-    # ----------TIME CONSTRAINTS----------
-
-    # Time cannot go above 20 ticks
-
-    E.add_constraint(time_20 >> ~row_cleared)
-
-    # --------------------------------------------------
-    # A successful Gamma or Delta will increase time by 1
-    # --------------------------------------------------
-
-
-
-    # --------------------------------------------------
-    # If a tetromino doesn’t make a Gamma or Delta move then the tetromino will drop by 1 y coordinate, 
-    # and time will move 1 step as long as no piece is below it, otherwise it will stay in place and the 
-    # last row clearance check will occur.
-    # --------------------------------------------------
-
-
-    E.add_constraint()
+    # Clockwise
+    E.add_constraint(up >> right)
+    E.add_constraint(right >> down)
+    E.add_constraint(down >> left)
+    E.add_constraint(left >> up)
+    # Counter Clockwise
+    E.add_constraint(up >> left)
+    E.add_constraint(left >> down)
+    E.add_constraint(down >> right)
+    E.add_constraint(right >> up)
 
 if __name__ == "__main__":
 

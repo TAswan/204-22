@@ -65,13 +65,14 @@ class Board:
 
 @proposition(E)
 class Anchor(Hashable):
-    # Anchor coordinate (x,y) is occupied on the board
-    def __init__(self, x, y):
+    # Anchor coordinate (x,y) is occupied on the board at time t
+    def __init__(self, x, y, t):
         self.x = x
         self.y = y
+        self.t = t
 
     def __repr__(self):
-        return f"Anchor is located at ({self.x}, {self.y})"
+        return f"Anchor is located at ({self.x}, {self.y}) at time t"
     
 @proposition(E)
 class Row_Cleared(Hashable):
@@ -81,17 +82,3 @@ class Row_Cleared(Hashable):
 
     def __repr__(self):
         return f"Row {self.row} has been cleared"
-
-@constraint.at_most_k(E, k=20)
-@proposition(E)
-class Time(Hashable):
-    # Time_m how many moves have been made by the tetromino (1-20)
-    def __init__(self, move):
-        self.move = move
-
-    def __repr__(self):
-        return f"Move {self.move}"
-
-if __name__ == '__main__':
-    board = Board()
-    print(board)
