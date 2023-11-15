@@ -100,52 +100,52 @@ def build_theory():
     # Alpha: a tetromino cannot exceed the boundaries
     for y in range(20):
         # line
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(0) & Rotation(0) for x in range(10)] +
-                                      [Anchor(x, y) & Tetromino(0) & Rotation(1) for x in range(1, 7)] +
-                                      [Anchor(x, y) & Tetromino(0) & Rotation(2) for x in range(10)] +
-                                      [Anchor(x, y) & Tetromino(0) & Rotation(3) for x in range(1, 7)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(0) & Rotation(0) for x in range(10)] +
+                                      [Block(x, y) & Tetromino(0) & Rotation(1) for x in range(1, 7)] +
+                                      [Block(x, y) & Tetromino(0) & Rotation(2) for x in range(10)] +
+                                      [Block(x, y) & Tetromino(0) & Rotation(3) for x in range(1, 7)])
 
         # square
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(1) & Rotation(0) for x in range(9)] +
-                                      [Anchor(x, y) & Tetromino(1) & Rotation(1) for x in range(9)] +
-                                      [Anchor(x, y) & Tetromino(1) & Rotation(2) for x in range(9)] +
-                                      [Anchor(x, y) & Tetromino(1) & Rotation(3) for x in range(9)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(1) & Rotation(0) for x in range(9)] +
+                                      [Block(x, y) & Tetromino(1) & Rotation(1) for x in range(9)] +
+                                      [Block(x, y) & Tetromino(1) & Rotation(2) for x in range(9)] +
+                                      [Block(x, y) & Tetromino(1) & Rotation(3) for x in range(9)])
     
         # J
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
+                                      [Block(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
     
         # L
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(3) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(3) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(3) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(3) & Rotation(3) for x in range(0, 9)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(3) & Rotation(0) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(3) & Rotation(1) for x in range(1, 10)] +
+                                      [Block(x, y) & Tetromino(3) & Rotation(2) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(3) & Rotation(3) for x in range(0, 9)])
     
         # S
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(4) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(4) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(4) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(4) & Rotation(3) for x in range(1, 10)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(4) & Rotation(0) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(4) & Rotation(1) for x in range(1, 10)] +
+                                      [Block(x, y) & Tetromino(4) & Rotation(2) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(4) & Rotation(3) for x in range(1, 10)])
     
         # T
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(5) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(5) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(5) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(5) & Rotation(3) for x in range(0, 9)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(5) & Rotation(0) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(5) & Rotation(1) for x in range(1, 10)] +
+                                      [Block(x, y) & Tetromino(5) & Rotation(2) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(5) & Rotation(3) for x in range(0, 9)])
     
         # Z
-        constraint.add_exactly_one(E, [Anchor(x, y) & Tetromino(6) & Rotation(0) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(6) & Rotation(1) for x in range(1, 10)] +
-                                      [Anchor(x, y) & Tetromino(6) & Rotation(2) for x in range(1, 9)] +
-                                      [Anchor(x, y) & Tetromino(6) & Rotation(3) for x in range(1, 10)])
+        constraint.add_exactly_one(E, [Block(x, y) & Tetromino(6) & Rotation(0) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(6) & Rotation(1) for x in range(1, 10)] +
+                                      [Block(x, y) & Tetromino(6) & Rotation(2) for x in range(1, 9)] +
+                                      [Block(x, y) & Tetromino(6) & Rotation(3) for x in range(1, 10)])
     
     # Beta: a tetromino cannot overlap with occupied cells
     for x in range(10):
         for y in range(20):
             for t in range(20):
-                E.add_constraint(~(Anchor(x, y, t) & Cell(x, y)))
+                E.add_constraint(~(Block(x, y, t) & Cell(x, y)))
 
     # Gamma: a tetromino can rotate
     # Clockwise

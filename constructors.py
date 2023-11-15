@@ -2,6 +2,8 @@ from bauhaus import Encoding, proposition, constraint
 
 from random import randint
 
+from tetrominos import TETROMINOS
+
 E = Encoding()
 
 class Hashable:
@@ -15,7 +17,7 @@ class Hashable:
         return str(self)
 
 class Node():
-    #  A node class for A* Pathfinding
+    # A node class for A* Pathfinding
 
     def __init__(self, parent=None, position=None):
         self.parent = parent
@@ -30,6 +32,33 @@ class Node():
 
     def __hash__(self):               #<-- added a hash method
         return hash(self.position)
+
+class Tetromino:
+    # Tetromino of shape and rotation at anchor at time 
+    def init(self, anchor, shape, rotation, time):
+        a = Block(anchor[0], anchor[1], time)
+        piece_coordinates = []
+        for coordinates in TETROMINOS[shape][rotation]:
+            piece_coordinates.append(Block(anchor[0] + coordinates[0], anchor[1] + coordinates[1], time))
+        self.anchor = a
+        self.tetromino = piece_coordinates
+
+    # def init(self, anchor, piece_coordinates, rotation_states):
+    #     self.anchor = anchor
+    #     self.piece_coordinates = piece_coordinates
+    #     self.rotation_states = rotation_states
+    #     self.current_rotation = 0
+        
+    # def rotate(self):
+    #     self.current_rotation = (self.current_rotation + 1) % len(self.rotation_states)
+    #     self.piece_coordinates = self.rotation_states[self.current_rotation]
+
+    def display(self):
+        print("Anchor Coordinate:", self.anchor)
+        print("Piece Coordinates:")
+        for coord in self.piece_coordinates:
+            print("  ", coord)
+        # print("Current Rotation State:", self.current_rotation)
 
 @proposition(E)
 class Cell(Hashable):
@@ -64,15 +93,15 @@ class Board:
         return strOut
 
 @proposition(E)
-class Anchor(Hashable):
-    # Anchor coordinate (x,y) is occupied on the board at time t
+class Block(Hashable):
+    # Block of a Tetromino coordinate (x,y) is occupied on the board at time t
     def __init__(self, x, y, t):
         self.x = x
         self.y = y
         self.t = t
 
     def __repr__(self):
-        return f"Anchor is located at ({self.x}, {self.y}) at time t"
+        return f"Block of a Tetromino is located at ({self.x}, {self.y}) at time t"
     
 @proposition(E)
 class Row_Cleared(Hashable):
