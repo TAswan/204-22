@@ -33,6 +33,7 @@ class Node():
     def __hash__(self):               #<-- added a hash method
         return hash(self.position)
 
+@proposition(E)
 class Tetromino:
     # Tetromino of shape and rotation at anchor at time 
     def init(self, anchor, shape, rotation, time):
@@ -73,11 +74,11 @@ class Cell(Hashable):
 class Board:
     # List of Cell propositions which denoted which cells of the board are occupied
     def __init__(self):
-        board = []
+        board = [[None for _ in range(10)] for _ in range(20)]
         for row in range(4, 20):
             for col in range(10):
                 if randint(0, 1):
-                    board.append(Cell(row, col))
+                    board[col][row] = (Cell(row, col))
 
         self.board = board
 

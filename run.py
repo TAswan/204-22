@@ -1,4 +1,4 @@
-from bauhaus import Encoding, proposition, constraint
+from bauhaus import Encoding, proposition, constraint, Or, And
 from bauhaus.utils import count_solutions, likelihood
 
 # These two lines make sure a faster SAT solver is used.
@@ -83,21 +83,38 @@ right = Rotation(1)
 down = Rotation(2)
 left = Rotation(3)
 
+def find_row_candidates(board, tetromino):
+    #TODO Tyler
+    cells_per_row = []
+    for y in range(20):
+        cells_per_row.append(sum(cell.y == y for cell in board))
+
+    match tetromino:
+        case 0
+
 def build_theory():
     # ----------BOARD CONSTRAINTS----------
 
+    rows = []
     for y in range(20):
-        constraint.add_at_most_k((Cell(0, y) & Cell(1, y) & Cell(2, y) & Cell(3, y) & Cell(4, y) & Cell(5, y) & Cell(6, y) & Cell(7, y) & Cell(8, y) & Cell(9, y)) >> row_cleared, k = 20)
+        cells = []
+        for x in range(10):
+            cells.append(Cell(x, y))
+        rows.append(And(cells))
+    E.add_constraint(Or(rows) >> row_cleared)
 
     # ----------TETROMINO CONSTRAINTS----------
 
     # A tetromino can only be of one type
+    #TODO possibly removev
     constraint.add_exactly_one(E, line, square, j, l, s, t, z) # Can be moved to decorator
 
     # A tetromino can only be of one rotation
+    #TODO possibly removev
     constraint.add_exactly_one(E, up, right, down, left) # Can be moved to decorator
 
     # Alpha: a tetromino cannot exceed the boundaries
+    #TODO verify add exactly one
     for y in range(20):
         # line
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(0) & Rotation(0) for x in range(10)] +
@@ -146,18 +163,13 @@ def build_theory():
         for y in range(20):
             for t in range(20):
                 E.add_constraint(~(Block(x, y, t) & Cell(x, y)))
-
-    # Gamma: a tetromino can rotate
-    # Clockwise
-    E.add_constraint(up >> right)
-    E.add_constraint(right >> down)
-    E.add_constraint(down >> left)
-    E.add_constraint(left >> up)
-    # Counter Clockwise
-    E.add_constraint(up >> left)
-    E.add_constraint(left >> down)
-    E.add_constraint(down >> right)
-    E.add_constraint(right >> up)
+    
+    # A Tetromino will drop if there is no cell below it up to 19 ticks
+    #TODO assumes blocks are linked
+    for x in range(10):
+        for y in range(20):
+            for t in range(19):
+                E.add_constraint((Block(x, y, t) & ~Cell(x, y + 1)) >> Block(x, y + 1, t + 1))
 
 if __name__ == "__main__":
 
