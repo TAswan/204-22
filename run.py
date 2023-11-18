@@ -3,12 +3,14 @@ from bauhaus.utils import count_solutions, likelihood
 
 # These two lines make sure a faster SAT solver is used.
 from nnf import config
+
 config.sat_backend = "kissat"
 
 from constructors import *
 
 # Encoding that will store all of your constraints
 E = Encoding()
+
 
 # To create propositions, create classes for them first, annotated with "@proposition" and the Encoding
 @proposition(E)
@@ -36,9 +38,10 @@ class FancyPropositions:
     def __repr__(self):
         return f"A.{self.data}"
 
+
 # Call your variables whatever you want
 a = BasicPropositions("a")
-b = BasicPropositions("b")   
+b = BasicPropositions("b")
 c = BasicPropositions("c")
 d = BasicPropositions("d")
 e = BasicPropositions("e")
@@ -66,6 +69,7 @@ def example_theory():
 
     return E
 
+
 # def tetromino_theory():
 
 row_cleared = Row_Cleared()
@@ -83,14 +87,55 @@ right = Rotation(1)
 down = Rotation(2)
 left = Rotation(3)
 
-def find_row_candidates(board, tetromino):
-    #TODO Tyler
-    cells_per_row = []
-    for y in range(20):
-        cells_per_row.append(sum(cell.y == y for cell in board))
 
-    match tetromino:
-        case 0
+def find_row_candidates(board):
+    """
+       takes in a board and adds constraints based on what Tetrominos can possibly clear a row
+
+       Args:
+           board(Board) : the board to check
+
+       Returns:
+           None: Mutates the encoding.
+       """
+    # holes that can be filled by tetrominos
+    hole_constraints = {
+        1: [line, j, l, s, t, z],
+        2: [square, j, l, s, z],
+        3: [t, j, l],
+        4: [line]
+    }
+
+    holes = set()
+    for row in board:
+        gap = True
+        # how many open spaces in a row
+        holes_in_row = sum(1 for value in row if not value)
+        # if theres gaps in the row, we can't clear it, so skip
+        if sum(True in row) > holes_in_row:
+            gap = True
+        if not gap:
+            holes.append(holes_in_row)
+
+    # row is already cleared
+    if 0 in holes:
+        E.add_constraint(row_cleared)
+        return
+    # all are eliminated at first
+    eliminated = set(line, square, j, l, s, t, z)
+
+    for hole_count in holes:
+        if hole_count in hole_constraints:
+            # get the allowed tetrominos for this hole count
+            possible_tetrominos = hole_constraints[hole_count]
+            for tetromino in possible_tetrominos:
+                # remove the tetromino from the eliminated set
+                eliminated.remove(tetromino)
+
+    # if the tetromino is eliminated, it can't clear any rows
+    for tetromino in eliminated:
+        E.add_constraint(tetromino >> ~row_cleared)
+
 
 def build_theory():
     # ----------BOARD CONSTRAINTS----------
@@ -106,70 +151,71 @@ def build_theory():
     # ----------TETROMINO CONSTRAINTS----------
 
     # A tetromino can only be of one type
-    #TODO possibly removev
-    constraint.add_exactly_one(E, line, square, j, l, s, t, z) # Can be moved to decorator
+    # TODO possibly removev
+    constraint.add_exactly_one(E, line, square, j, l, s, t, z)  # Can be moved to decorator
 
     # A tetromino can only be of one rotation
-    #TODO possibly removev
-    constraint.add_exactly_one(E, up, right, down, left) # Can be moved to decorator
+    # TODO possibly removev
+    constraint.add_exactly_one(E, up, right, down, left)  # Can be moved to decorator
 
     # Alpha: a tetromino cannot exceed the boundaries
-    #TODO verify add exactly one
+    # TODO verify add exactly one
     for y in range(20):
         # line
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(0) & Rotation(0) for x in range(10)] +
-                                      [Block(x, y) & Tetromino(0) & Rotation(1) for x in range(1, 7)] +
-                                      [Block(x, y) & Tetromino(0) & Rotation(2) for x in range(10)] +
-                                      [Block(x, y) & Tetromino(0) & Rotation(3) for x in range(1, 7)])
+                                   [Block(x, y) & Tetromino(0) & Rotation(1) for x in range(1, 7)] +
+                                   [Block(x, y) & Tetromino(0) & Rotation(2) for x in range(10)] +
+                                   [Block(x, y) & Tetromino(0) & Rotation(3) for x in range(1, 7)])
 
         # square
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(1) & Rotation(0) for x in range(9)] +
-                                      [Block(x, y) & Tetromino(1) & Rotation(1) for x in range(9)] +
-                                      [Block(x, y) & Tetromino(1) & Rotation(2) for x in range(9)] +
-                                      [Block(x, y) & Tetromino(1) & Rotation(3) for x in range(9)])
-    
+                                   [Block(x, y) & Tetromino(1) & Rotation(1) for x in range(9)] +
+                                   [Block(x, y) & Tetromino(1) & Rotation(2) for x in range(9)] +
+                                   [Block(x, y) & Tetromino(1) & Rotation(3) for x in range(9)])
+
         # J
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(2) & Rotation(0) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
-                                      [Block(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
-    
+                                   [Block(x, y) & Tetromino(2) & Rotation(1) for x in range(1, 10)] +
+                                   [Block(x, y) & Tetromino(2) & Rotation(2) for x in range(1, 9)] +
+                                   [Block(x, y) & Tetromino(2) & Rotation(3) for x in range(0, 9)])
+
         # L
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(3) & Rotation(0) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(3) & Rotation(1) for x in range(1, 10)] +
-                                      [Block(x, y) & Tetromino(3) & Rotation(2) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(3) & Rotation(3) for x in range(0, 9)])
-    
+                                   [Block(x, y) & Tetromino(3) & Rotation(1) for x in range(1, 10)] +
+                                   [Block(x, y) & Tetromino(3) & Rotation(2) for x in range(1, 9)] +
+                                   [Block(x, y) & Tetromino(3) & Rotation(3) for x in range(0, 9)])
+
         # S
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(4) & Rotation(0) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(4) & Rotation(1) for x in range(1, 10)] +
-                                      [Block(x, y) & Tetromino(4) & Rotation(2) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(4) & Rotation(3) for x in range(1, 10)])
-    
+                                   [Block(x, y) & Tetromino(4) & Rotation(1) for x in range(1, 10)] +
+                                   [Block(x, y) & Tetromino(4) & Rotation(2) for x in range(1, 9)] +
+                                   [Block(x, y) & Tetromino(4) & Rotation(3) for x in range(1, 10)])
+
         # T
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(5) & Rotation(0) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(5) & Rotation(1) for x in range(1, 10)] +
-                                      [Block(x, y) & Tetromino(5) & Rotation(2) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(5) & Rotation(3) for x in range(0, 9)])
-    
+                                   [Block(x, y) & Tetromino(5) & Rotation(1) for x in range(1, 10)] +
+                                   [Block(x, y) & Tetromino(5) & Rotation(2) for x in range(1, 9)] +
+                                   [Block(x, y) & Tetromino(5) & Rotation(3) for x in range(0, 9)])
+
         # Z
         constraint.add_exactly_one(E, [Block(x, y) & Tetromino(6) & Rotation(0) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(6) & Rotation(1) for x in range(1, 10)] +
-                                      [Block(x, y) & Tetromino(6) & Rotation(2) for x in range(1, 9)] +
-                                      [Block(x, y) & Tetromino(6) & Rotation(3) for x in range(1, 10)])
-    
+                                   [Block(x, y) & Tetromino(6) & Rotation(1) for x in range(1, 10)] +
+                                   [Block(x, y) & Tetromino(6) & Rotation(2) for x in range(1, 9)] +
+                                   [Block(x, y) & Tetromino(6) & Rotation(3) for x in range(1, 10)])
+
     # Beta: a tetromino cannot overlap with occupied cells
     for x in range(10):
         for y in range(20):
             for t in range(20):
                 E.add_constraint(~(Block(x, y, t) & Cell(x, y)))
-    
+
     # A Tetromino will drop if there is no cell below it up to 19 ticks
-    #TODO assumes blocks are linked
+    # TODO assumes blocks are linked
     for x in range(10):
         for y in range(20):
             for t in range(19):
                 E.add_constraint((Block(x, y, t) & ~Cell(x, y + 1)) >> Block(x, y + 1, t + 1))
+
 
 if __name__ == "__main__":
 
@@ -183,7 +229,7 @@ if __name__ == "__main__":
     print("   Solution: %s" % T.solve())
 
     print("\nVariable likelihoods:")
-    for v,vn in zip([a,b,c,x,y,z], 'abcxyz'):
+    for v, vn in zip([a, b, c, x, y, z], 'abcxyz'):
         # Ensure that you only send these functions NNF formulas
         # Literals are compiled to NNF here
         print(" %s: %.2f" % (vn, likelihood(T, v)))
