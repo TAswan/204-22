@@ -7,6 +7,7 @@ from nnf import config
 config.sat_backend = "kissat"
 
 from constructors import *
+from tetrominos import TETROMINOS
 
 # Encoding that will store all of your constraints
 E = Encoding()
@@ -151,11 +152,11 @@ def build_theory():
     # ----------TETROMINO CONSTRAINTS----------
 
     # A tetromino can only be of one type
-    # TODO possibly removev
+    # TODO possibly remove
     constraint.add_exactly_one(E, line, square, j, l, s, t, z)  # Can be moved to decorator
 
     # A tetromino can only be of one rotation
-    # TODO possibly removev
+    # TODO possibly remove
     constraint.add_exactly_one(E, up, right, down, left)  # Can be moved to decorator
 
     # Alpha: a tetromino cannot exceed the boundaries
@@ -210,11 +211,15 @@ def build_theory():
                 E.add_constraint(~(Block(x, y, t) & Cell(x, y)))
 
     # A Tetromino will drop if there is no cell below it up to 19 ticks
-    # TODO assumes blocks are linked
     for x in range(10):
         for y in range(20):
             for t in range(19):
-                E.add_constraint((Block(x, y, t) & ~Cell(x, y + 1)) >> Block(x, y + 1, t + 1))
+                for tetromino in TETROMINOS.keys():
+                    for rotation in range(4):
+                        cells = []
+                        for coord in range(4):
+                            cells.append(~Cell(x + TETROMINOS[tetromino][rotation][coord][0], y + 1))
+                        E.add_constraint((Tetromino((x, y), tetromino, rotation, t) & And(cells)) >> Tetromino((x, y + 1), tetromino, rotation, t + 1))
 
 
 if __name__ == "__main__":

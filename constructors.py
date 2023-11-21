@@ -34,7 +34,7 @@ class Node():
         return hash(self.position)
 
 @proposition(E)
-class Tetromino:
+class Tetromino(Hashable):
     # Tetromino of shape and rotation at anchor at time 
     def init(self, anchor, shape, rotation, time):
         a = Block(anchor[0], anchor[1], time)

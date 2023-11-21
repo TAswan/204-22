@@ -19,7 +19,7 @@ TETROMINOS = {
         [(0, 0), (0, 1), (0, -1), (1, -1)]      # 270 degrees rotation
     ],
     "L": [
-        [(0, 0), (1, 0), (-1, 0), (-1, 1)] ,    # Original position
+        [(0, 0), (1, 0), (-1, 0), (-1, 1)],     # Original position
         [(0, 0), (0, 1), (-1, -1), (0, -1)],    # 90 degrees rotation
         [(0, 0), (1, 0), (-1, 0), (1, -1)],     # 180 degrees rotation
         [(0, 0), (0, 1), (0, -1), (1, 1)]       # 270 degrees rotation
