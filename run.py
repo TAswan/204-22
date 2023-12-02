@@ -110,13 +110,16 @@ def find_row_candidates(board):
     }
 
     holes = set()
+    rows = []
     for row in board:
+        rows.append(row)
         gap = True
         # how many open spaces in a row
         holes_in_row = sum(1 for value in row if not value)
         # if theres gaps in the row, we can't clear it, so skip
-        if sum(True in row) > holes_in_row:
+        if sum(True in row) > holes_in_row or holes_in_row > 4:
             gap = True
+            rows.remove(row)
         if not gap:
             holes.append(holes_in_row)
 
@@ -134,10 +137,10 @@ def find_row_candidates(board):
             for tetromino in possible_tetrominos:
                 # remove the tetromino from the eliminated set
                 eliminated.remove(tetromino)
-
     # if the tetromino is eliminated, it can't clear any rows
     for tetromino in eliminated:
         E.add_constraint(tetromino >> ~row_cleared)
+    return rows
 
 
 def build_theory():
