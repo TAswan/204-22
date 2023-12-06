@@ -237,6 +237,13 @@ def build_theory():
                             tetromino_to_cells.append(Cell(x + TETROMINOS[tetromino][rotation][coord][0], y + TETROMINOS[tetromino][rotation][coord][1]))
                         E.add_constraint((Tetromino((x, y), tetromino, rotation, t) & Or(cells)) >> And(cells))
 
+    # If time reaches 20 ticks, then it is not possible for a row to be cleared
+    for x in range(10):
+        for y in range(20):
+            for tetromino in TETROMINOS.keys():
+                for rotation in range(4):
+                    E.add_constraint(Tetromino((x, y), tetromino, rotation, 20) >> ~row_cleared)
+
 
 if __name__ == "__main__":
 
