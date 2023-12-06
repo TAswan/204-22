@@ -1,4 +1,10 @@
-# (0, 0) is the anchor coordinate
+'''
+Tetromino's are consist of multiple blocks, so we need to create said
+blocks every time we create a Tetromino (e.g. when it moves). These
+tuples provide the values from which the block coordinates extend out
+from the anchor point--(0, 0) is the anchor coordinate since the
+anchor coordinate plus 0 gives the anchor coordinate.
+'''
 TETROMINOS = {
     "line": [
         [(0, 0), (1, 0), (2, 0), (-1, 0)],      # Original position

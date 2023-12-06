@@ -16,23 +16,6 @@ class Hashable:
     def __repr__(self):
         return str(self)
 
-class Node():
-    # A node class for A* Pathfinding
-
-    def __init__(self, parent=None, position=None):
-        self.parent = parent
-        self.position = position
-
-        self.g = 0
-        self.h = 0
-        self.f = 0
-
-    def __eq__(self, other):
-        return self.position == other.position
-
-    def __hash__(self):               #<-- added a hash method
-        return hash(self.position)
-
 @proposition(E)
 class Tetromino(Hashable):
     # Tetromino of shape and rotation at anchor at time 
@@ -102,13 +85,13 @@ class Block(Hashable):
         self.t = t
 
     def __repr__(self):
-        return f"Block of a Tetromino is located at ({self.x}, {self.y}) at time t"
+        return f"Block of a Tetromino is located at ({self.x}, {self.y}) at time {self.t}"
     
 @proposition(E)
 class Row_Cleared(Hashable):
-    # Row row has been cleared
-    def __init__(self, row):
-        self.row = row
+    # A row has been cleared
+    def __init__(self):
+        pass
 
     def __repr__(self):
         return f"Row {self.row} has been cleared"

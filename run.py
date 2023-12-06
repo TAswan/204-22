@@ -83,13 +83,13 @@ row_cleared = Row_Cleared()
 #                 for rotation in range(4):
 #                     tetrominos[tetromino].append(Tetromino((x, y), tetromino, rotation, t))
 
-line = Tetromino(0)
-square = Tetromino(1)
-j = Tetromino(2)
-l = Tetromino(3)
-s = Tetromino(4)
-t = Tetromino(5)
-z = Tetromino(6)
+line = Tetromino((0, 4), "line", 0, 0)
+square = Tetromino((0, 4), "square", 0, 0)
+j = Tetromino((0, 4), "J", 0, 0)
+l = Tetromino((0, 4), "L", 0, 0)
+s = Tetromino((0, 4), "S", 0, 0)
+t = Tetromino((0, 4), "T", 0, 0)
+z = Tetromino((0, 4), "Z", 0, 0)
 
 def find_row_candidates(board):
     """
@@ -104,7 +104,7 @@ def find_row_candidates(board):
     # holes that can be filled by tetrominos
     hole_constraints = {
         1: [line, j, l, s, t, z],
-        2: [square, j, l, s, z],
+        2: [square, j, l, s, t, z],
         3: [t, j, l],
         4: [line]
     }
@@ -146,6 +146,7 @@ def find_row_candidates(board):
 def build_theory():
     # ----------BOARD CONSTRAINTS----------
 
+    # If any row as all cells filled, then the row is cleared
     rows = []
     for y in range(20):
         cells = []
@@ -160,7 +161,7 @@ def build_theory():
     # TODO possibly remove
     constraint.add_exactly_one(E, line, square, j, l, s, t, z)  # Can be moved to decorator
 
-    # Alpha: a tetromino cannot exceed the boundaries
+    # A tetromino cannot exceed the boundaries
     # Logic: For all time, every row is allowed one (legal) x value for a Tetromino's anchor, i.e., a Tetromino cannot occupy more than one x value in a given row
     # TODO verify add exactly one
     for t in range(20):
@@ -207,7 +208,7 @@ def build_theory():
                                           [Tetromino((x, y), "Z", 2, t) for x in range(1, 9)] +
                                           [Tetromino((x, y), "Z", 3, t) for x in range(1, 10)])
 
-    # Beta: a tetromino cannot overlap with occupied cells
+    # A tetromino cannot overlap with occupied cells
     for x in range(10):
         for y in range(20):
             for t in range(20):
